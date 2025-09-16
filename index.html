@@ -1,0 +1,224 @@
+https://github.com/lawdrafts/lawdrafts-static/new/main
+          provide legal advice. Documents generated here are drafts based on
+          user input. Please consult a licensed advocate for review,
+          stamping, and registration.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white mt-12 py-4">
+    <div
+      class="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500"
+    >
+      <a href="#terms" class="mr-4 hover:underline">Terms</a>
+      <a href="#privacy" class="mr-4 hover:underline">Privacy</a>
+      <a href="#contact" class="hover:underline">Contact</a>
+    </div>
+  </footer>
+
+  <!-- Application logic -->
+  <script>
+    // Template builders for each document type. These return HTML strings with
+    // interpolated user data. Feel free to adjust the templates for your
+    // jurisdiction or document requirements.
+    const templates = {
+      rent: (data) => {
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Rent Agreement</h3>
+          <p>This Rent Agreement is made on ${data.date} between <strong>${data.landlord}</strong> (Landlord) residing at ${data.landlordAddress} and <strong>${data.tenant}</strong> (Tenant) residing at ${data.tenantAddress}.</p>
+          <p>The Landlord agrees to rent the property located at <strong>${data.propertyAddress}</strong> to the Tenant for a term of ${data.term} months starting from ${data.startDate} to ${data.endDate} at a monthly rent of INR ${data.rentAmount} payable in advance. A security deposit of INR ${data.depositAmount} is paid by the Tenant.</p>
+          <p>Both parties agree to abide by the terms and conditions set forth in this Agreement.</p>
+          <p>Signed,<br>Landlord: ${data.landlord}<br>Tenant: ${data.tenant}</p>
+        `;
+      },
+      affidavit: (data) => {
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Address Affidavit</h3>
+          <p>I, <strong>${data.name}</strong>, son/daughter of ${data.parentName}, residing at <strong>${data.address}</strong>, do hereby solemnly affirm and declare that this is my permanent address and I have been residing here since ${data.sinceDate}.</p>
+          <p>I declare that the above information is true to the best of my knowledge and belief and nothing material has been concealed therein.</p>
+          <p>Deponent,<br>${data.name}</p>
+        `;
+      },
+      poa: (data) => {
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Power of Attorney</h3>
+          <p>I, <strong>${data.principalName}</strong> of ${data.principalAddress}, appoint <strong>${data.agentName}</strong> of ${data.agentAddress} as my lawful attorney to act, manage and transact on my behalf regarding the property located at ${data.propertyAddress}.</p>
+          <p>My attorney shall have full authority to sign documents, appear before authorities, and do all acts necessary for the management of the aforesaid property.</p>
+          <p>Executed on ${data.date} at ${data.city}.</p>
+          <p>Principal,<br>${data.principalName}</p>
+        `;
+      },
+    };
+
+    // Define the input fields for each document type. Each object in the
+    // definitions array contains an id, label, and input type. These fields
+    // will be rendered dynamically based on the selected document type.
+    const formDefinitions = {
+      rent: [
+        { id: 'landlord', label: 'Landlord Name', type: 'text' },
+        { id: 'landlordAddress', label: 'Landlord Address', type: 'text' },
+        { id: 'tenant', label: 'Tenant Name', type: 'text' },
+        { id: 'tenantAddress', label: 'Tenant Address', type: 'text' },
+        { id: 'propertyAddress', label: 'Property Address', type: 'text' },
+        { id: 'term', label: 'Term (months)', type: 'number' },
+        { id: 'startDate', label: 'Start Date', type: 'date' },
+        { id: 'endDate', label: 'End Date', type: 'date' },
+        { id: 'rentAmount', label: 'Monthly Rent (INR)', type: 'number' },
+        { id: 'depositAmount', label: 'Security Deposit (INR)', type: 'number' },
+        { id: 'date', label: 'Agreement Date', type: 'date' },
+      ],
+      affidavit: [
+        { id: 'name', label: 'Full Name', type: 'text' },
+        { id: 'parentName', label: 'Parent/Guardian Name', type: 'text' },
+        { id: 'address', label: 'Full Address', type: 'text' },
+        { id: 'sinceDate', label: 'Residing Since (Date)', type: 'date' },
+      ],
+      poa: [
+        { id: 'principalName', label: 'Principal Name', type: 'text' },
+        { id: 'principalAddress', label: 'Principal Address', type: 'text' },
+        { id: 'agentName', label: 'Attorney (Agent) Name', type: 'text' },
+        { id: 'agentAddress', label: 'Agent Address', type: 'text' },
+        { id: 'propertyAddress', label: 'Property Address', type: 'text' },
+        { id: 'date', label: 'Date', type: 'date' },
+        { id: 'city', label: 'City', type: 'text' },
+      ],
+    };
+
+    /**
+     * Render the form inputs based on the selected document type. Each call
+     * replaces the contents of the formFields container with new input
+     * elements. After rendering, we update the preview to reflect any
+     * default values and attach new event listeners on the fields.
+     */
+    function renderFormFields() {
+      const docType = document.getElementById('docType').value;
+      const fieldsContainer = document.getElementById('formFields');
+      fieldsContainer.innerHTML = '';
+      formDefinitions[docType].forEach((field) => {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = `
+          <label class="block text-gray-700">${field.label}</label>
+          <input id="${field.id}" type="${field.type}" class="mt-1 block w-full p-2 border border-gray-300 rounded" />
+        `;
+        fieldsContainer.appendChild(div);
+      });
+      updatePreview();
+    }
+
+    /**
+     * Collect values from the dynamic form into an object. It reads the
+     * current document type to know which fields are present, then grabs
+     * the corresponding DOM elements' values and builds a dictionary.
+     */
+    function getFormData() {
+      const docType = document.getElementById('docType').value;
+      const data = {};
+      formDefinitions[docType].forEach((field) => {
+        data[field.id] = document.getElementById(field.id).value;
+      });
+      return data;
+    }
+
+    /**
+     * Update the preview section using the appropriate template and
+     * current form data. The preview container is cleared and replaced
+     * with new markup each time the form changes.
+     */
+    function updatePreview() {
+      const docType = document.getElementById('docType').value;
+      const data = getFormData();
+      const html = templates[docType](data);
+      document.getElementById('preview').innerHTML = html;
+    }
+
+    /**
+     * Generate a PDF from the current preview. This function uses
+     * html2canvas to convert the preview DOM element into an image, then
+     * jsPDF to generate the PDF. PDFs are downloaded with a timestamped
+     * filename to avoid naming collisions.
+     */
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const preview = document.getElementById('preview');
+      // Convert the preview to a high-res canvas to improve PDF quality
+      const canvas = await html2canvas(preview, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`document-${Date.now()}.pdf`);
+    }
+
+    /**
+     * Initiate a Razorpay payment. Uses a test amount and either a
+     * globally defined RAZORPAY_KEY or falls back to a placeholder. After
+     * payment, the handler calls downloadPDF() to trigger document
+     * download. Note: For production use, you should create orders on
+     * your server using your Key Secret and verify the payment via a
+     * webhook for security.
+     */
+    function initiatePayment() {
+      const docType = document.getElementById('docType').value;
+      const formData = getFormData();
+      const options = {
+        key: window.RAZORPAY_KEY || 'rzp_test_PLACEHOLDER',
+        amount: 10000, // 100 INR (in paise)
+        currency: 'INR',
+        name: 'LawDrafts.in',
+        description: 'Payment for ' + docType + ' document',
+        handler: function (response) {
+          console.log('Payment successful', response);
+          downloadPDF();
+        },
+        prefill: {
+          name:
+            formData.name ||
+            formData.tenant ||
+            formData.principalName ||
+            '',
+          email: '',
+          contact: '',
+        },
+        notes: {
+          docType: docType,
+          data: JSON.stringify(formData),
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }
+
+    // Event listeners for dynamic behaviour
+    document
+      .getElementById('docType')
+      .addEventListener('change', () => {
+        renderFormFields();
+      });
+    document
+      .getElementById('formFields')
+      .addEventListener('input', () => {
+        updatePreview();
+      });
+    document
+      .getElementById('downloadBtn')
+      .addEventListener('click', () => {
+        updatePreview();
+        downloadPDF();
+      });
+    document.getElementById('payBtn').addEventListener('click', () => {
+      updatePreview();
+      initiatePayment();
+    });
+
+    // Initial form render on page load
+    renderFormFields();
+  </script>
+</body>
+</html>
