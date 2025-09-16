@@ -1,4 +1,78 @@
-https://github.com/lawdrafts/lawdrafts-static/new/main
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LawDrafts.in - Generate Legal Documents</title>
+  <!-- Tailwind CSS via CDN for quick styling -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+  <!-- Libraries for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Razorpay Checkout library (optional) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-gray-900">LawDrafts.in</h1>
+      <p class="text-gray-600">
+        Generate your legal documents quickly and easily
+      </p>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="py-6">
+    <div class="max-w-4xl mx-auto px-4">
+      <!-- Document selection and form -->
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Document Details</h2>
+        <div class="mb-4">
+          <label class="block text-gray-700">Select Document Type</label>
+          <select
+            id="docType"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded"
+          >
+            <option value="rent">Rent Agreement</option>
+            <option value="affidavit">Address Affidavit</option>
+            <option value="poa">Power of Attorney</option>
+          </select>
+        </div>
+        <div id="formFields"><!-- form fields will be injected here --></div>
+      </div>
+      <!-- Preview section -->
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Preview</h2>
+        <div id="preview" class="prose max-w-none">
+          <p class="text-gray-500">
+            Fill out the form to see the preview.
+          </p>
+        </div>
+      </div>
+      <!-- Action buttons -->
+      <div class="flex justify-between items-center">
+        <button
+          id="downloadBtn"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Download PDF
+        </button>
+        <button
+          id="payBtn"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Pay &amp; Download
+        </button>
+      </div>
+      <!-- Disclaimer -->
+      <div class="mt-6 text-xs text-gray-500">
+        <p>
+          <strong>Disclaimer:</strong> We are not a law firm and do not
           provide legal advice. Documents generated here are drafts based on
           user input. Please consult a licensed advocate for review,
           stamping, and registration.
@@ -21,7 +95,7 @@ https://github.com/lawdrafts/lawdrafts-static/new/main
   <!-- Application logic -->
   <script>
     // Template builders for each document type. These return HTML strings with
-    // interpolated user data. Feel free to adjust the templates for your
+    // olated user data. Feel free to adjust the templates for your
     // jurisdiction or document requirements.
     const templates = {
       rent: (data) => {
@@ -219,6 +293,4 @@ https://github.com/lawdrafts/lawdrafts-static/new/main
 
     // Initial form render on page load
     renderFormFields();
-  </script>
-</body>
-</html>
+  </script></body>/html>
