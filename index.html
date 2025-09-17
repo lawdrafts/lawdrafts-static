@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LawDrafts.in - Generate Legal Documents</title>
+  <!-- Tailwind CSS via CDN for quick styling -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
+  <!-- Libraries for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Razorpay Checkout library removed for free version -->
+
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto flex items-center justify-between py-6 px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center">
+        <!-- Inline SVG logo representing scales of justice -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-blue-600 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <g stroke="currentColor" stroke-width="2" fill="none">
+            <line x1="12" y1="2" x2="12" y2="14" />
+            <line x1="7" y1="6" x2="17" y2="6" />
+            <line x1="7" y1="6" x2="7" y2="7" />
+            <line x1="17" y1="6" x2="17" y2="7" />
+            <circle cx="7" cy="10" r="3" />
+            <circle cx="17" cy="10" r="3" />
+            <rect x="10" y="14" width="4" height="6" />
+          </g>
+        </svg>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">LawDrafts.in</h1>
+          <p class="text-gray-600">Professional Legal Documents on Demand</p>
+        </div>
+      </div>
+      <div class="hidden md:flex space-x-4">
+        <!-- Pricing link removed in free version -->
+        <a href="#features" class="text-gray-700 hover:text-blue-600">Features</a>
+        <a href="#contact" class="text-gray-700 hover:text-blue-600">Contact</a>
+        <a href="refunds.html" class="text-gray-700 hover:text-blue-600">Policies</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-blue-50 py-16">
+    <div class="max-w-3xl mx-auto text-center px-4">
+      <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Create Legal Documents Instantly</h2>
+      <p class="text-lg text-gray-600 mb-8">Choose from a variety of templates, enter details, and receive a polished document in minutes.</p>
+      <button onclick="document.getElementById('docSection').scrollIntoView({ behavior: 'smooth' })" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Get Started</button>
+    </div>
+  </section>
+
+
+  <!-- Features Section -->
+  <section id="features" class="bg-white py-16">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-8">Why Choose Us</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="p-6 bg-gray-50 rounded-lg shadow">
+          <h3 class="text-xl font-semibold mb-2">Comprehensive Templates</h3>
+          <p class="text-gray-600">Access a wide range of legal templates tailored to Indian law.</p>
+        </div>
+        <div class="p-6 bg-gray-50 rounded-lg shadow">
+          <h3 class="text-xl font-semibold mb-2">Instant Generation</h3>
+          <p class="text-gray-600">Get your documents within minutes after filling out simple forms.</p>
+        </div>
+        <div class="p-6 bg-gray-50 rounded-lg shadow">
+          <h3 class="text-xl font-semibold mb-2">Free Access</h3>
+          <p class="text-gray-600">All documents are currently free to download.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <section id="docSection" class="py-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <!-- Document selection and form -->
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Document Details</h2>
+        <div class="mb-4">
+          <label class="block text-gray-700">Select Document Type</label>
+          <select
+            id="docType"
+            class="mt-1 block w-full p-2 border border-gray-300 rounded"
+          >
+            <option value="rent">Rent Agreement</option>
+            <option value="affidavit">Address Affidavit</option>
+            <option value="poa">Power of Attorney</option>
+            <option value="nda">Non-Disclosure Agreement (NDA)</option>
+            <option value="partnership">Partnership Deed</option>
+            <option value="employment">Employment Contract</option>
+          </select>
+        </div>
+        <div id="formFields"><!-- form fields will be injected here --></div>
+      </div>
+      <!-- Preview section -->
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Preview</h2>
+        <div id="preview" class="prose max-w-none">
+          <p class="text-gray-500">
+            Fill out the form to see the preview.
+          </p>
+        </div>
+        <!-- Download button for free version -->
+        <div class="flex justify-end mt-4">
+          <button id="downloadBtn" onclick="downloadPDF()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Download PDF</button>
+        </div>
+      </div>
+      <!-- Disclaimer (payment button removed) -->
+      <!-- Disclaimer -->
+      <div class="mt-6 text-xs text-gray-500">
+        <p>
+          <strong>Disclaimer:</strong> We are not a law firm and do not
+          provide legal advice. Documents generated here are drafts based on
+          user input. Please consult a licensed advocate for review,
+          stamping, and registration.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section removed for free version -->
+
+  <!-- Contact Section (repositioned after pricing) -->
+  <section id="contact" class="bg-gray-50 py-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-4">Get in Touch</h2>
+      <p class="text-gray-600 mb-6">Have questions or need help? Reach out and we'll get back to you.</p>
+      <form class="space-y-4" onsubmit="handleContactForm(event)">
+        <input type="text" id="contactName" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded" required />
+        <input type="email" id="contactEmail" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded" required />
+        <textarea id="contactMessage" placeholder="Your Message" class="w-full p-3 border border-gray-300 rounded" rows="4" required></textarea>
+        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700">Send Message</button>
+      </form>
+      <p id="contactResponse" class="text-green-600 mt-4 hidden"></p>
+    </div>
+  </section>
+
+  <!-- Terms Section -->
+  <section id="terms" class="bg-white py-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-4">Terms &amp; Conditions</h2>
+      <p class="text-gray-600">By using LawDrafts.in you agree that the documents generated are drafts based on your inputs and do not constitute legal advice. You are responsible for ensuring the accuracy and completeness of information provided and for obtaining any necessary legal review, stamping, notarization, or registration as required by your jurisdiction.</p>
+    </div>
+  </section>
+
+  <!-- Privacy Section -->
+  <section id="privacy" class="bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-2xl font-bold mb-4">Privacy Policy</h2>
+      <p class="text-gray-600">We respect your privacy. We collect only the information necessary to generate your documents and process payments. Your data is never sold or shared with third parties, and we use industry-standard security measures to protect your information.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white mt-12 py-4">
+    <div
+      class="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500"
+    >
+      <a href="terms.html" class="mr-4 hover:underline">Terms</a>
+      <a href="privacy.html" class="mr-4 hover:underline">Privacy</a>
+      <a href="refunds.html" class="mr-4 hover:underline">Refund Policy</a>
+      <a href="contact.html" class="hover:underline">Contact</a>
+    </div>
+  </footer>
+
+  <!-- Application logic -->
+  <script>
+    // Template builders for each document type. These return HTML strings with
+    // interpolated user data. Feel free to adjust the templates for your
+    // jurisdiction or document requirements.
+    const templates = {
+      rent: (data) => {
+        // Comprehensive rent agreement reflecting typical Indian residential lease clauses.
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Rent Agreement</h3>
+          <p>This Rent Agreement ("Agreement") is entered into on <strong>${data.date}</strong> between <strong>${data.landlord}</strong> ("Landlord"), residing at ${data.landlordAddress}, and <strong>${data.tenant}</strong> ("Tenant"), residing at ${data.tenantAddress}.</p>
+          <p>The Landlord hereby lets to the Tenant the residential premises situated at <strong>${data.propertyAddress}</strong> for a fixed term of <strong>${data.term}</strong> month(s), commencing on <strong>${data.startDate}</strong> and ending on <strong>${data.endDate}</strong>. The premises shall be used by the Tenant solely for residential purposes.</p>
+          <p>The Tenant agrees to pay to the Landlord a monthly rent of <strong>INR ${data.rentAmount}</strong>, payable in advance on or before the <strong>${data.dueDate}</strong> day of each calendar month. In addition, the Tenant shall pay monthly maintenance charges of <strong>INR ${data.maintenanceCharges}</strong> towards generator, elevator, common areas and water supply, and shall bear all electricity and water consumption charges.</p>
+          <p>The Tenant has paid a refundable security deposit of <strong>INR ${data.depositAmount}</strong> to the Landlord. The deposit shall be refunded, after adjustment of any outstanding dues or damage, within a reasonable time upon the Tenant surrendering vacant possession of the premises.</p>
+          <p>The Tenant shall not sub‑let, assign, transfer or otherwise create any third‑party interest in the premises. The Tenant shall keep the premises in good and tenantable condition and carry out minor repairs; structural repairs shall be the responsibility of the Landlord. No structural alterations may be made without the prior written consent of the Landlord. The Landlord may, upon reasonable notice, enter the premises to inspect its condition.</p>
+          <p>The Owner shall pay all property taxes, municipal taxes, cess and any subscription or periodical fees to the local welfare association in respect of the premises and shall keep the Tenant indemnified and free from any claims with respect to quiet enjoyment of the premises.</p>
+          <p>The Tenant shall comply with all applicable laws and the rules and regulations of the local authorities or housing society and shall not use the premises for any unlawful or commercial purpose.</p>
+          <p>Either party may terminate this Agreement prior to expiry by giving <strong>${data.noticePeriod}</strong> month(s) written notice to the other. Upon termination, the Tenant shall vacate the premises, pay all outstanding dues and hand over the keys. Overstay beyond the term or notice period shall attract proportionate rent and damages.</p>
+          <p>IN WITNESS WHEREOF, the parties hereto have executed this Agreement on the date first above written.</p>
+          <p><strong>Landlord:</strong> ${data.landlord}<br><strong>Tenant:</strong> ${data.tenant}</p>
+        `;
+      },
+      affidavit: (data) => {
+        // Address affidavit with affirmation of residence, age and purpose.
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Address Affidavit</h3>
+          <p>I, <strong>${data.name}</strong>, son/daughter of <strong>${data.parentName}</strong>, aged <strong>${data.age}</strong> years, residing at <strong>${data.address}</strong>, do hereby solemnly affirm and declare as under:</p>
+          <ol class="list-decimal list-inside">
+            <li>That my permanent residential address is ${data.address} and I have been residing there continuously since <strong>${data.sinceDate}</strong>.</li>
+            <li>That this affidavit is executed for the purpose of <strong>${data.purpose}</strong> and may be produced before any authority as proof of my address.</li>
+            <li>That the statements made herein are true and correct to the best of my knowledge and belief and nothing material has been concealed.</li>
+          </ol>
+          <p>Deponent,<br><strong>${data.name}</strong></p>
+        `;
+      },
+      poa: (data) => {
+        // General power of attorney granting broad authority over specific property.
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">General Power of Attorney</h3>
+          <p>This General Power of Attorney is executed on <strong>${data.date}</strong> at <strong>${data.city}</strong> by <strong>${data.principalName}</strong>, residing at ${data.principalAddress} ("Principal"), in favour of <strong>${data.agentName}</strong>, residing at ${data.agentAddress} ("Attorney").</p>
+          <p>The Principal hereby appoints the Attorney to act on his/her behalf in relation to the property situated at <strong>${data.propertyAddress}</strong> ("Property"). The Attorney is authorised to:</p>
+          <ol class="list-decimal list-inside">
+            <li>Maintain and manage the Property, including paying taxes, rents and other charges, and keeping the Property in good condition.</li>
+            <li>Enter into agreements to sell, lease or mortgage the Property, receive earnest money and consideration, issue receipts and deposit the proceeds into the Principal's account.</li>
+            <li>Execute and sign deeds, agreements, affidavits, indemnity bonds and other documents, and present them for registration before any Sub‑Registrar or authority.</li>
+            <li>Appear before courts, tribunals and government offices, appoint advocates, file or withdraw suits, obtain copies of documents and perform all acts necessary for protecting the Principal's interests.</li>
+            <li>Open, operate and close bank accounts in the Principal's name for the purpose of managing the Property and to deposit or withdraw monies in connection therewith.</li>
+            <li>Apply for and obtain utilities such as electricity, water, sewerage and telephone for the Property, and to disconnect or reconnect the same.</li>
+          </ol>
+          <p>This Power of Attorney does not confer any right, title or interest in the Property upon the Attorney. All proceeds and benefits arising from the Property shall belong to the Principal. The Principal retains the right to revoke this Power of Attorney at any time.</p>
+          <p>This Power of Attorney shall continue in force until revoked in writing by the Principal or until the demise of the Principal, whichever occurs earlier.</p>
+          <p>IN WITNESS WHEREOF, the Principal has executed this instrument in the presence of the witnesses below.</p>
+          <p><strong>Principal:</strong> ${data.principalName}<br><strong>Attorney:</strong> ${data.agentName}</p>
+        `;
+      },
+      nda: (data) => {
+        // Comprehensive non‑disclosure agreement with definitions, obligations, exclusions, term and governing law.
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Non‑Disclosure Agreement</h3>
+          <p>This Non‑Disclosure Agreement ("Agreement") is entered into on <strong>${data.effectiveDate}</strong> by and between <strong>${data.disclosingParty}</strong> and <strong>${data.receivingParty}</strong> (collectively, the "Parties").</p>
+          <p><strong>1. Definition of Confidential Information.</strong> "Confidential Information" means all non‑public information disclosed by the Disclosing Party to the Receiving Party, whether oral, written or in any other form, including but not limited to business plans, technical data, trade secrets, customer lists and other proprietary information.</p>
+          <p><strong>2. Obligations of Receiving Party.</strong> The Receiving Party shall: (a) use the Confidential Information solely for the purpose of <strong>${data.purpose}</strong>; (b) maintain the Confidential Information in strict confidence using at least the same degree of care as it uses for its own confidential information; (c) restrict disclosure of the Confidential Information to its employees or representatives who need to know such information and who are bound by confidentiality obligations; and (d) not disclose the Confidential Information to any third party without the prior written consent of the Disclosing Party.</p>
+          <p><strong>3. Exclusions.</strong> Confidential Information does not include information which: (a) is or becomes publicly available without breach of this Agreement; (b) is received from a third party without restriction; or (c) is independently developed without reference to the Confidential Information.</p>
+          <p><strong>4. Return or Destruction.</strong> Upon termination of this Agreement or upon the Disclosing Party's request, the Receiving Party shall promptly return or destroy all Confidential Information and certify its destruction.</p>
+          <p><strong>5. Term.</strong> This Agreement shall commence on the Effective Date and remain in effect for <strong>${data.term}</strong> year(s). The confidentiality obligations with respect to any Confidential Information disclosed during the term shall survive for the same period following termination.</p>
+          <p><strong>6. Governing Law and Jurisdiction.</strong> This Agreement shall be governed by and construed in accordance with the laws of <strong>${data.governingLaw}</strong>. Any disputes arising out of or in connection with this Agreement shall be subject to the exclusive jurisdiction of the courts of <strong>${data.jurisdiction}</strong>.</p>
+          <p><strong>7. Remedies.</strong> The Receiving Party acknowledges that any breach of this Agreement may cause irreparable harm to the Disclosing Party for which monetary damages may be an inadequate remedy. Accordingly, in the event of such breach, the Disclosing Party shall be entitled to seek injunctive relief, specific performance or any other equitable remedy, in addition to all other remedies available at law.</p>
+          <p>IN WITNESS WHEREOF, the Parties have executed this Agreement as of the date first above written.</p>
+          <p><strong>Disclosing Party:</strong> ${data.disclosingParty}<br><strong>Receiving Party:</strong> ${data.receivingParty}</p>
+        `;
+      },
+      partnership: (data) => {
+        // Expanded partnership deed covering capital contributions, profit sharing, duties, retirement and dispute resolution.
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Partnership Deed</h3>
+          <p>This Partnership Deed is executed on <strong>${data.date}</strong> at <strong>${data.location}</strong> between <strong>${data.partner1Name}</strong>, residing at ${data.partner1Address}, and <strong>${data.partner2Name}</strong>, residing at ${data.partner2Address} (collectively the "Partners"). The Partners agree to carry on the business of <strong>${data.businessType}</strong> in partnership under the firm name <strong>${data.firmName}</strong>.</p>
+          <p><strong>1. Commencement and Duration.</strong> The partnership shall commence on ${data.date} and shall continue until dissolved by mutual agreement or at will.</p>
+          <p><strong>2. Capital and Profit Sharing.</strong> The Partners shall contribute capital as follows: ${data.partner1Name}: INR ${data.capitalContribution1}; ${data.partner2Name}: INR ${data.capitalContribution2}. Profits and losses of the firm, after accounting for salary and interest on capital, shall be shared in the following ratio: ${data.partner1Name} – ${data.profitShare1}% and ${data.partner2Name} – ${data.profitShare2}%.</p>
+          <p><strong>3. Management and Duties.</strong> Each Partner shall actively participate in the business and devote his/her full skill and attention thereto. Proper books of account shall be maintained at the principal place of business and shall be open to inspection by either Partner. No Partner shall, without the consent of the other, engage in any competing business or admit a new partner.</p>
+          <p><strong>4. Bank Accounts.</strong> Bank accounts of the firm shall be opened and operated by either Partner or jointly as mutually decided. All monies received on behalf of the firm shall be deposited into such accounts, and withdrawals shall be made only for business purposes.</p>
+          <p><strong>5. Retirement and Death.</strong> Either Partner may retire from the firm by giving <strong>${data.noticePeriod}</strong> month(s) prior notice in writing. On retirement or death of a Partner, the surviving Partner shall settle accounts and pay the retiring Partner or his/her legal representatives the amount due, including goodwill.</p>
+          <p><strong>6. Dissolution and Dispute Resolution.</strong> The firm may be dissolved at any time by mutual consent. Any disputes arising between the Partners shall be referred to arbitration in accordance with the Arbitration and Conciliation Act, 1996, and the award of the arbitrator shall be final and binding.</p>
+          <p><strong>7. Accounts and Audit.</strong> Proper books of account of the firm shall be kept at the principal place of business and shall be balanced and audited at least once every year. Each Partner shall have free access to the books and may inspect and take extracts therefrom at any reasonable time.</p>
+          <p><strong>8. Admission of New Partners.</strong> No person shall be admitted as a partner in the firm without the prior written consent of all the existing Partners.</p>
+          <p>IN WITNESS WHEREOF, the Partners have signed this Deed on the date and place mentioned above.</p>
+          <p><strong>Partner 1:</strong> ${data.partner1Name}<br><strong>Partner 2:</strong> ${data.partner2Name}</p>
+        `;
+      },
+      employment: (data) => {
+        // Comprehensive employment contract outlining duties, probation, confidentiality, non‑compete and termination.
+        return `
+          <h3 class="text-lg font-bold text-center mb-4">Employment Agreement</h3>
+          <p>This Employment Agreement ("Agreement") is made on <strong>${data.date}</strong> between <strong>${data.employerName}</strong>, having its office at ${data.employerAddress} ("Employer"), and <strong>${data.employeeName}</strong>, residing at ${data.employeeAddress} ("Employee").</p>
+          <p><strong>1. Position and Duties.</strong> The Employee is appointed as <strong>${data.position}</strong> and shall perform such duties as may be assigned by the Employer from time to time. The Employee shall devote full time and attention to the Employer's business and shall comply with all applicable laws and company policies.</p>
+          <p><strong>2. Place of Work.</strong> The Employee shall work at <strong>${data.placeOfWork}</strong> but may be transferred to any other location of the Employer's operations as required.</p>
+          <p><strong>3. Term and Probation.</strong> Employment shall commence on <strong>${data.startDate}</strong>. The first <strong>${data.probationPeriod}</strong> month(s) shall constitute a probationary period during which either party may terminate this Agreement with immediate effect without notice.</p>
+          <p><strong>4. Compensation.</strong> The Employee shall receive a monthly salary of <strong>INR ${data.salary}</strong>, subject to statutory deductions. The Employee shall be entitled to benefits, if any, in accordance with the Employer's policies.</p>
+          <p><strong>5. Confidentiality.</strong> The Employee shall keep confidential all proprietary and confidential information of the Employer and shall not disclose or use such information except as required in the performance of duties. Upon termination, the Employee shall return all Company property and confidential materials.</p>
+          <p><strong>6. Non‑Compete.</strong> During employment and for <strong>${data.nonCompetePeriod}</strong> year(s) after termination, the Employee shall not engage in any business or employment that competes with the Employer within <strong>${data.jurisdiction}</strong>, without the Employer's prior written consent.</p>
+          <p><strong>7. Termination.</strong> After completion of probation, either party may terminate this Agreement by giving <strong>${data.noticePeriod}</strong> month(s) written notice. The Employer may terminate the Employee without notice for cause, including misconduct, breach of this Agreement or poor performance.</p>
+          <p><strong>8. Intellectual Property.</strong> Any inventions, discoveries, designs, processes or other works created or developed by the Employee during the course of employment and relating to the business of the Employer shall be the exclusive property of the Employer, and the Employee hereby assigns all rights, title and interest therein to the Employer.</p>
+          <p><strong>9. Non‑Solicitation.</strong> During the term of employment and for <strong>${data.nonCompetePeriod}</strong> year(s) after termination, the Employee shall not solicit or induce any employees, clients or suppliers of the Employer to terminate or alter their relationship with the Employer.</p>
+          <p><strong>10. Governing Law.</strong> This Agreement shall be governed by and construed in accordance with the laws of India. Any dispute arising out of or in connection with this Agreement shall be subject to the exclusive jurisdiction of the courts at <strong>${data.jurisdiction}</strong>.</p>
+          <p>IN WITNESS WHEREOF, the Parties have executed this Agreement on the date first above written.</p>
+          <p><strong>Employer:</strong> ${data.employerName}<br><strong>Employee:</strong> ${data.employeeName}</p>
+        `;
+      },
+    };
+
+    // Define the input fields for each document type. Each object in the
+    // definitions array contains an id, label, and input type. These fields
+    // will be rendered dynamically based on the selected document type.
+    const formDefinitions = {
+      rent: [
+        { id: 'landlord', label: 'Landlord Name', type: 'text' },
+        { id: 'landlordAddress', label: 'Landlord Address', type: 'text' },
+        { id: 'tenant', label: 'Tenant Name', type: 'text' },
+        { id: 'tenantAddress', label: 'Tenant Address', type: 'text' },
+        { id: 'propertyAddress', label: 'Property Address', type: 'text' },
+        { id: 'term', label: 'Lease Term (months)', type: 'number' },
+        { id: 'startDate', label: 'Lease Start Date', type: 'date' },
+        { id: 'endDate', label: 'Lease End Date', type: 'date' },
+        { id: 'rentAmount', label: 'Monthly Rent (INR)', type: 'number' },
+        { id: 'maintenanceCharges', label: 'Monthly Maintenance Charges (INR)', type: 'number' },
+        { id: 'depositAmount', label: 'Security Deposit (INR)', type: 'number' },
+        { id: 'dueDate', label: 'Rent Due Date (Day)', type: 'number' },
+        { id: 'noticePeriod', label: 'Notice Period (months)', type: 'number' },
+        { id: 'date', label: 'Agreement Date', type: 'date' },
+      ],
+      affidavit: [
+        { id: 'name', label: 'Full Name', type: 'text' },
+        { id: 'parentName', label: 'Parent/Guardian Name', type: 'text' },
+        { id: 'age', label: 'Age (years)', type: 'number' },
+        { id: 'address', label: 'Residential Address', type: 'text' },
+        { id: 'sinceDate', label: 'Residing Since (Date)', type: 'date' },
+        { id: 'purpose', label: 'Purpose of Affidavit', type: 'text' },
+      ],
+      poa: [
+        { id: 'principalName', label: 'Principal Name', type: 'text' },
+        { id: 'principalAddress', label: 'Principal Address', type: 'text' },
+        { id: 'agentName', label: 'Attorney (Agent) Name', type: 'text' },
+        { id: 'agentAddress', label: 'Agent Address', type: 'text' },
+        { id: 'propertyAddress', label: 'Property Address', type: 'text' },
+        { id: 'date', label: 'Date', type: 'date' },
+        { id: 'city', label: 'City', type: 'text' },
+      ],
+      nda: [
+        { id: 'disclosingParty', label: 'Disclosing Party Name', type: 'text' },
+        { id: 'receivingParty', label: 'Receiving Party Name', type: 'text' },
+        { id: 'effectiveDate', label: 'Effective Date', type: 'date' },
+        { id: 'purpose', label: 'Purpose of Disclosure', type: 'text' },
+        { id: 'term', label: 'Confidentiality Term (years)', type: 'number' },
+        { id: 'governingLaw', label: 'Governing Law', type: 'text' },
+        { id: 'jurisdiction', label: 'Jurisdiction', type: 'text' },
+      ],
+      partnership: [
+        { id: 'partner1Name', label: 'Partner 1 Name', type: 'text' },
+        { id: 'partner1Address', label: 'Partner 1 Address', type: 'text' },
+        { id: 'partner2Name', label: 'Partner 2 Name', type: 'text' },
+        { id: 'partner2Address', label: 'Partner 2 Address', type: 'text' },
+        { id: 'firmName', label: 'Firm Name', type: 'text' },
+        { id: 'businessType', label: 'Nature of Business', type: 'text' },
+        { id: 'capitalContribution1', label: 'Partner 1 Capital Contribution (INR)', type: 'number' },
+        { id: 'capitalContribution2', label: 'Partner 2 Capital Contribution (INR)', type: 'number' },
+        { id: 'profitShare1', label: 'Partner 1 Profit Share (%)', type: 'number' },
+        { id: 'profitShare2', label: 'Partner 2 Profit Share (%)', type: 'number' },
+        { id: 'noticePeriod', label: 'Retirement Notice Period (months)', type: 'number' },
+        { id: 'location', label: 'Principal Place of Business', type: 'text' },
+        { id: 'date', label: 'Date', type: 'date' },
+      ],
+      employment: [
+        { id: 'employerName', label: 'Employer Name', type: 'text' },
+        { id: 'employerAddress', label: 'Employer Address', type: 'text' },
+        { id: 'employeeName', label: 'Employee Name', type: 'text' },
+        { id: 'employeeAddress', label: 'Employee Address', type: 'text' },
+        { id: 'position', label: 'Designation', type: 'text' },
+        { id: 'salary', label: 'Monthly Salary (INR)', type: 'number' },
+        { id: 'placeOfWork', label: 'Place of Work', type: 'text' },
+        { id: 'probationPeriod', label: 'Probation Period (months)', type: 'number' },
+        { id: 'nonCompetePeriod', label: 'Non‑Compete Period (years)', type: 'number' },
+        { id: 'noticePeriod', label: 'Notice Period (months)', type: 'number' },
+        { id: 'jurisdiction', label: 'Jurisdiction (City)', type: 'text' },
+        { id: 'startDate', label: 'Start Date', type: 'date' },
+        { id: 'date', label: 'Agreement Date', type: 'date' },
+      ],
+    };
+
+    /**
+     * Render the form inputs based on the selected document type. Each call
+     * replaces the contents of the formFields container with new input
+     * elements. After rendering, we update the preview to reflect any
+     * default values and attach new event listeners on the fields.
+     */
+    function renderFormFields() {
+      const docType = document.getElementById('docType').value;
+      const fieldsContainer = document.getElementById('formFields');
+      fieldsContainer.innerHTML = '';
+      formDefinitions[docType].forEach((field) => {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = `
+          <label class="block text-gray-700">${field.label}</label>
+          <input id="${field.id}" type="${field.type}" class="mt-1 block w-full p-2 border border-gray-300 rounded" />
+        `;
+        fieldsContainer.appendChild(div);
+      });
+      updatePreview();
+    }
+
+    /**
+     * Collect values from the dynamic form into an object. It reads the
+     * current document type to know which fields are present, then grabs
+     * the corresponding DOM elements' values and builds a dictionary.
+     */
+    function getFormData() {
+      const docType = document.getElementById('docType').value;
+      const data = {};
+      formDefinitions[docType].forEach((field) => {
+        data[field.id] = document.getElementById(field.id).value;
+      });
+      return data;
+    }
+
+    /**
+     * Update the preview section using the appropriate template and
+     * current form data. The preview container is cleared and replaced
+     * with new markup each time the form changes.
+     */
+    function updatePreview() {
+      const docType = document.getElementById('docType').value;
+      const data = getFormData();
+      const html = templates[docType](data);
+      document.getElementById('preview').innerHTML = html;
+    }
+
+    /**
+     * Generate a PDF from the current preview. This function uses
+     * html2canvas to convert the preview DOM element into an image, then
+     * jsPDF to generate the PDF. PDFs are downloaded with a timestamped
+     * filename to avoid naming collisions.
+     */
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const preview = document.getElementById('preview');
+      // Convert the preview to a high-res canvas to improve PDF quality
+      const canvas = await html2canvas(preview, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`document-${Date.now()}.pdf`);
+    }
+
+    /* initiatePayment function removed in free version */
+
+    /**
+     * Handle contact form submission. This function prevents the default form
+     * submission behaviour and displays a thank-you message. For a real
+     * application you could integrate with an email service or backend.
+     */
+    function handleContactForm(event) {
+      event.preventDefault();
+      const responseEl = document.getElementById('contactResponse');
+      responseEl.textContent = 'Thank you for contacting us! We will get back to you soon.';
+      responseEl.classList.remove('hidden');
+      // Reset form fields
+      event.target.reset();
+    }
+
+    // Event listeners for dynamic behaviour
+    document
+      .getElementById('docType')
+      .addEventListener('change', () => {
+        renderFormFields();
+      });
+    document
+      .getElementById('formFields')
+      .addEventListener('input', () => {
+        updatePreview();
+      });
+    // payBtn event listener removed for free version
+
+
+    // Initial form render on page load
+    renderFormFields();
+  </script>
+</body>
+</html>
